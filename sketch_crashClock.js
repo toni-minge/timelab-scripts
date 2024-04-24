@@ -85,10 +85,10 @@ function setup() {
 
   if (container) {
     // Get the width and height of the container
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const screenWidth = container.clientWidth;
+    const screenHeight = container.clientHeight;
 
-    let canvas = createCanvas(width, height);
+    let canvas = createCanvas(screenWidth, screenHeight);
     canvas.parent('crashclock-container');
 
     // randomStart();
