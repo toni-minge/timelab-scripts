@@ -20,6 +20,9 @@ class DropLetter {
       this.nowSize,
       { sampleFactor: 0.1, simplifyThreshold: 0 }
     );
+    if (!this.points || this.points.length === 0) {
+      console.error('Failed to generate points for letter:', this.thisLetter);
+    }
   }
   physicsPointMaker() {
     var t = this.orgX + textWidth(this.thisLetter) / 2,
