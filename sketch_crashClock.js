@@ -335,14 +335,16 @@ function configureClock() {
 
 function positionBoundaries() {
   var boundAng = TWO_PI / boundCount;
-
   clockBorder = (handsRadius + borderExtra - 25) * 2;
 
   for (var m = 0; m < boundCount; m++) {
-    var ang = m * boundAng;
-    // var rad = (handsRadius + borderPadding + borderExtra - 25);
-    var rad = clockBorder / 2 + borderPadding;
+    if (!boundaries[m] || !boundaries[m].body) {
+      console.error('Boundary or its body is undefined at index', m);
+      continue; // Skip this iteration to avoid crashing
+    }
 
+    var ang = m * boundAng;
+    var rad = clockBorder / 2 + borderPadding;
     var xB = width / 2 + cos(ang) * rad;
     var yB = height / 2 + sin(ang) * rad;
 
