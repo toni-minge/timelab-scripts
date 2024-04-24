@@ -1,75 +1,91 @@
 class DropLetter {
-  constructor(t, s, i, e) {
-    (this.nowSize = s),
-      (this.thisLetter = t),
-      (this.orgX = i),
-      (this.orgY = e),
-      this.coreOrg,
-      this.minPoint,
-      this.maxPoint,
-      this.diff,
-      this.points,
-      this.bodyLetter,
-      ' ' != this.thisLetter && (this.textPointMaker(), this.physicsPointMaker());
+  constructor(letter, size, originX, originY) {
+    this.size = size;
+    this.letter = letter;
+    this.originX = originX;
+    this.originY = originY;
+    this.bodyLetter = null; // Initialize to null for safety
+
+    // Check if the letter is a space, no need to process if it is
+    if (this.letter !== ' ') {
+      this.initializeLetter();
+    }
   }
-  textPointMaker() {
+
+  initializeLetter() {
+    // Only proceed if font is loaded and the letter is not a whitespace
     if (!tFont[fontSelect]) {
-      console.error('Font is not loaded yet:', this.thisLetter);
-      return;
+      console.error('Font is not loaded yet:', this.letter);
+      return; // Prevent further execution
     }
 
+    this.textPointMaker();
+    if (this.points && this.points.length > 0) {
+      this.physicsPointMaker();
+    } else {
+      console.error('No valid points available for physics body creation:', this.letter);
+    }
+  }
+
+  textPointMaker() {
     this.points = tFont[fontSelect].textToPoints(
-      this.thisLetter,
-      this.orgX,
-      this.orgY,
-      this.nowSize,
+      this.letter,
+      this.originX,
+      this.originY,
+      this.size,
       { sampleFactor: 0.1, simplifyThreshold: 0 }
     );
+
     if (!this.points || this.points.length === 0) {
-      console.error('Failed to generate points for letter:', this.thisLetter);
+      console.error('Failed to generate points for letter:', this.letter);
     }
   }
   physicsPointMaker() {
-    var t = this.orgX + textWidth(this.thisLetter) / 2,
-      s = this.orgY - (this.nowSize * pgTextFactor[fontSelect]) / 2;
-    (this.bodyLetter = Bodies.fromVertices(t, s, this.points, { friction: 0, restitution: 0 })),
-      Composite.add(world, this.bodyLetter),
-      (this.minPoint = createVector(this.bodyLetter.bounds.min.x, this.bodyLetter.bounds.min.y)),
-      (this.maxPoint = createVector(this.bodyLetter.bounds.max.x, this.bodyLetter.bounds.max.y));
-    var i = this.bodyLetter.position;
-    (this.diff = createVector(-(i.x - this.minPoint.x), -(i.y - this.maxPoint.y))),
-      Matter.Body.setPosition(this.bodyLetter, { x: i.x, y: this.orgY - this.diff.y }),
-      (this.coreOrg = createVector(i.x, this.orgY - this.diff.y));
+    let centerX = this.originX + textWidth(this.letter) / 2;
+    let centerY = this.originY - (this.size * pgTextFactor[fontSelect]) / 2;
+    this.bodyLetter = Bodies.fromVertices(centerX, centerY, this.points, {
+      friction: 0,
+      restitution: 0,
+    });
+
+    if (this.bodyLetter) {
+      Composite.add(world, this.bodyLetter);
+    } else {
+      console.error('Failed to create a physical body from vertices for letter:', this.letter);
+    }
   }
   run() {
-    ' ' != this.thisLetter && (this.update(), this.display());
+    if (this.letter !== ' ' && this.bodyLetter) {
+      this.update();
+      this.display();
+    }
   }
   update() {}
   display() {
-    var t = this.bodyLetter.position,
-      s = this.bodyLetter.angle;
-    noStroke(),
-      this.bodyLetter.vertices,
-      push(),
-      translate(t.x, t.y),
-      rotate(s),
-      translate(0, this.diff.y),
-      fill(fillColor),
-      textAlign(CENTER),
-      textSize(this.nowSize),
-      text(this.thisLetter, 0, 0),
-      pop();
+    if (!this.bodyLetter) return;
+
+    let position = this.bodyLetter.position;
+    let angle = this.bodyLetter.angle;
+    push();
+    noStroke();
+    translate(position.x, position.y);
+    rotate(angle);
+    fill(fillColor);
+    textAlign(CENTER);
+    textSize(this.size);
+    text(this.letter, 0, 0);
+    pop();
   }
   resetPos() {
-    ' ' != this.thisLetter &&
-      (Matter.Body.setPosition(this.bodyLetter, { x: this.coreOrg.x, y: this.coreOrg.y }),
-      Matter.Body.setAngle(this.bodyLetter, 0),
-      Matter.Body.setAngularSpeed(this.bodyLetter, 0),
-      Matter.Body.setAngularVelocity(this.bodyLetter, 0),
-      Matter.Body.setSpeed(this.bodyLetter, 0));
+    if (this.letter !== ' ' && this.bodyLetter) {
+      Matter.Body.setPosition(this.bodyLetter, { x: this.originX, y: this.originY });
+      Matter.Body.setAngle(this.bodyLetter, 0);
+    }
   }
   removeIt() {
-    ' ' != this.thisLetter && Composite.remove(world, this.bodyLetter);
+    if (this.letter !== ' ' && this.bodyLetter) {
+      Composite.remove(world, this.bodyLetter);
+    }
   }
 }
 class DropLine {
