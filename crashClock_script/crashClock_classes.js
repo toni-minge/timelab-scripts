@@ -1,120 +1,69 @@
 class DropLetter {
   constructor(t, s, i, e) {
-    this.nowSize = s;
-    this.thisLetter = t;
-    this.orgX = i;
-    this.orgY = e;
-    this.coreOrg;
-    this.minPoint;
-    this.maxPoint;
-    this.diff;
-    this.points;
-    this.bodyLetter;
-
-    if (this.thisLetter !== ' ') {
-      this.textPointMaker();
-      this.physicsPointMaker();
-    }
+    (this.nowSize = s),
+      (this.thisLetter = t),
+      (this.orgX = i),
+      (this.orgY = e),
+      this.coreOrg,
+      this.minPoint,
+      this.maxPoint,
+      this.diff,
+      this.points,
+      this.bodyLetter,
+      ' ' != this.thisLetter && (this.textPointMaker(), this.physicsPointMaker());
   }
-
   textPointMaker() {
-    // Assuming tFont and fontSelect are defined and accessible globally
     this.points = tFont[fontSelect].textToPoints(
       this.thisLetter,
       this.orgX,
       this.orgY,
       this.nowSize,
-      {
-        sampleFactor: 0.1,
-        simplifyThreshold: 0,
-      }
+      { sampleFactor: 0.1, simplifyThreshold: 0 }
     );
   }
-
   physicsPointMaker() {
-    const centerX = this.orgX + textWidth(this.thisLetter) / 2;
-    const centerY = this.orgY - (this.nowSize * pgTextFactor[fontSelect]) / 2;
-
-    // Create the body from vertices
-    this.bodyLetter = Bodies.fromVertices(
-      centerX,
-      centerY,
-      this.points,
-      {
-        friction: 0,
-        restitution: 0,
-      },
-      true
-    );
-
-    // Check if the body was created successfully
-    if (!this.bodyLetter) {
-      console.error('Failed to create a physics body for letter:', this.thisLetter);
-      return; // Exit if the body creation fails
-    }
-
-    Composite.add(world, this.bodyLetter);
-
-    // Calculate the minimum and maximum points
-    this.minPoint = createVector(this.bodyLetter.bounds.min.x, this.bodyLetter.bounds.min.y);
-    this.maxPoint = createVector(this.bodyLetter.bounds.max.x, this.bodyLetter.bounds.max.y);
-
-    // Adjust position to align the graphical text with the physics body
-    const positionOffset = createVector(
-      -(this.bodyLetter.position.x - this.minPoint.x),
-      -(this.bodyLetter.position.y - this.minPoint.y)
-    );
-    Matter.Body.setPosition(this.bodyLetter, {
-      x: this.bodyLetter.position.x,
-      y: this.orgY - positionOffset.y,
-    });
-
-    // Update coreOrg to the new position for resetting purposes
-    this.coreOrg = createVector(this.bodyLetter.position.x, this.orgY - positionOffset.y);
+    var t = this.orgX + textWidth(this.thisLetter) / 2,
+      s = this.orgY - (this.nowSize * pgTextFactor[fontSelect]) / 2;
+    (this.bodyLetter = Bodies.fromVertices(t, s, this.points, { friction: 0, restitution: 0 })),
+      Composite.add(world, this.bodyLetter),
+      (this.minPoint = createVector(this.bodyLetter.bounds.min.x, this.bodyLetter.bounds.min.y)),
+      (this.maxPoint = createVector(this.bodyLetter.bounds.max.x, this.bodyLetter.bounds.max.y));
+    var i = this.bodyLetter.position;
+    (this.diff = createVector(-(i.x - this.minPoint.x), -(i.y - this.maxPoint.y))),
+      Matter.Body.setPosition(this.bodyLetter, { x: i.x, y: this.orgY - this.diff.y }),
+      (this.coreOrg = createVector(i.x, this.orgY - this.diff.y));
   }
-
   run() {
-    if (this.thisLetter !== ' ') {
-      this.update();
-      this.display();
-    }
+    ' ' != this.thisLetter && (this.update(), this.display());
   }
-
-  update() {
-    // Implement logic to update properties or animation states
-  }
-
+  update() {}
   display() {
-    const pos = this.bodyLetter.position;
-    const angle = this.bodyLetter.angle;
-
-    push();
-    translate(pos.x, pos.y);
-    rotate(angle);
-    fill(fillColor); // Ensure fillColor is defined and accessible
-    noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(this.nowSize);
-    text(this.thisLetter, 0, 0);
-    pop();
+    var t = this.bodyLetter.position,
+      s = this.bodyLetter.angle;
+    noStroke(),
+      this.bodyLetter.vertices,
+      push(),
+      translate(t.x, t.y),
+      rotate(s),
+      translate(0, this.diff.y),
+      fill(fillColor),
+      textAlign(CENTER),
+      textSize(this.nowSize),
+      text(this.thisLetter, 0, 0),
+      pop();
   }
-
   resetPos() {
-    if (this.thisLetter !== ' ') {
-      Matter.Body.setPosition(this.bodyLetter, this.coreOrg);
-      Matter.Body.setAngle(this.bodyLetter, 0);
-      Matter.Body.setAngularVelocity(this.bodyLetter, 0);
-      Matter.Body.setVelocity(this.bodyLetter, { x: 0, y: 0 });
-    }
+    ' ' != this.thisLetter &&
+      (Matter.Body.setPosition(this.bodyLetter, { x: this.coreOrg.x, y: this.coreOrg.y }),
+      Matter.Body.setAngle(this.bodyLetter, 0),
+      Matter.Body.setAngularSpeed(this.bodyLetter, 0),
+      Matter.Body.setAngularVelocity(this.bodyLetter, 0),
+      Matter.Body.setSpeed(this.bodyLetter, 0));
   }
-
   removeIt() {
-    if (this.thisLetter !== ' ') {
-      Composite.remove(world, this.bodyLetter);
-    }
+    ' ' != this.thisLetter && Composite.remove(world, this.bodyLetter);
   }
 }
-
 class DropLine {
   constructor(t, s, i) {
     (this.mode = t),
