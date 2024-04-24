@@ -76,7 +76,7 @@ var fullScale = 1.5;
 var styleMode = 0;
 
 function preload() {
-  tFont[1] = loadFont('https://toni-minge.github.io/timelab-scripts/Inter-Medium.tff');
+  tFont[1] = loadFont('https://toni-minge.github.io/timelab-scripts/Inter-Medium.ttf');
   pgTextFactor[1] = 0.735;
 }
 
