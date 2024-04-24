@@ -1,2 +1,3 @@
-# Skripts für das Timelab 
+# Scripts for the Timelab
 
+Liebe Grüße
