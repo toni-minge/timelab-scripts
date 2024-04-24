@@ -77,7 +77,7 @@ var styleMode = 0;
 
 function preload() {
   tFont[fontSelect] = loadFont(
-    'Inter-Medium.ttf',
+    'https://toni-minge.github.io/timelab-scripts/Inter-Medium.ttf',
     () => {
       console.log('Font loaded successfully');
     },
