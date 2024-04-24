@@ -79,7 +79,7 @@ function preload() {
   tFont[fontSelect] = loadFont(
     'Inter-Medium.ttf',
     () => {
-      console.log('Font loaded successfully');
+      // console.log('Font loaded successfully');
       // checkSetupReadiness(); // Call setup readiness function after font is loaded
     },
     (err) => {
@@ -193,7 +193,7 @@ function setupSketch() {
   mConstraint = MouseConstraint.create(engine, options);
   World.add(world, mConstraint);
 
-  console.log('Setup complete.');
+  // console.log('Setup complete.');
   // draw();
 
   // loop();
