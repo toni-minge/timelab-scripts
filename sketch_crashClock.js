@@ -77,9 +77,10 @@ var styleMode = 0;
 
 function preload() {
   tFont[fontSelect] = loadFont(
-    'https://toni-minge.github.io/timelab-scripts/Inter-Medium.ttf',
+    'Inter-Medium.ttf',
     () => {
       console.log('Font loaded successfully');
+      // checkSetupReadiness(); // Call setup readiness function after font is loaded
     },
     (err) => {
       console.error('Error loading font:', err);
@@ -89,81 +90,121 @@ function preload() {
   pgTextFactor[1] = 0.735;
 }
 
-function setup() {
+// function preload() {
+//   // Asynchronously load font
+//   tFont[fontSelect] = loadFont(
+//     'https://toni-minge.github.io/timelab-scripts/Inter-Medium.ttf',
+//     function () {
+//       console.log('Font loaded successfully.');
+//       checkSetupReadiness(); // Call setup readiness function after font is loaded
+//     },
+//     function (err) {
+//       console.error('Failed to load font:', err);
+//     }
+//   );
+
+// }
+
+function checkSetupReadiness() {
+  const container = document.getElementById('crashclock-container');
+  if (
+    container &&
+    tFont[fontSelect] &&
+    document.fonts.check('12px ' + tFont[fontSelect].fontName)
+  ) {
+    // All ready, proceed with setup
+    initializeSketch(container);
+  } else {
+    console.error('Waiting for resources...');
+    setTimeout(checkSetupReadiness, 100); // Check again after 100ms
+  }
+}
+
+function initializeSketch(container) {
+  const screenWidth = container.clientWidth;
+  const screenHeight = container.clientHeight;
+
+  let canvas = createCanvas(screenWidth, screenHeight);
+  canvas.parent('crashclock-container');
+
+  setupSketch(); // Function containing the rest of your setup code
+}
+
+function setupSketch() {
   const container = document.getElementById('crashclock-container');
 
-  if (container) {
-    // Get the width and height of the container
-    const screenWidth = container.clientWidth;
-    const screenHeight = container.clientHeight;
+  // Get the width and height of the container
+  const screenWidth = container.clientWidth;
+  const screenHeight = container.clientHeight;
 
-    let canvas = createCanvas(screenWidth, screenHeight);
-    canvas.parent('crashclock-container');
+  let canvas = createCanvas(screenWidth, screenHeight);
+  canvas.parent('crashclock-container');
 
-    if (!tFont[fontSelect]) {
-      console.error('Font not ready. Ensure fonts are loaded before setup.');
-      return;
-    }
+  // randomStart();
+  // plannedStart();
 
-    // randomStart();
-    // plannedStart();
+  setText();
 
-    setText();
+  secSmoothAng = TWO_PI / 60 / fps;
+  configureClock();
+  holdMin = minute();
 
-    secSmoothAng = TWO_PI / 60 / fps;
-    configureClock();
-    holdMin = minute();
+  // create an engine
+  var engineOptions = {
+    positionIterations: 10,
+    velocityIterations: 10,
+    // constraintIterations: 4
+  };
+  engine = Engine.create(engineOptions);
+  world = engine.world;
 
-    // create an engine
-    var engineOptions = {
-      positionIterations: 10,
-      velocityIterations: 10,
-      // constraintIterations: 4
-    };
-    engine = Engine.create(engineOptions);
-    world = engine.world;
+  textFont(tFont[fontSelect]);
+  strokeJoin(ROUND);
 
-    textFont(tFont[fontSelect]);
-    strokeJoin(ROUND);
+  frameRate(fps);
 
-    frameRate(fps);
-
-    // TYPE PIECES
-    if (setMode == 0) {
-      dropGroupHour = new DropAll(0);
-    } else if (setMode == 1) {
-      dropGroupHour = new DropAll(0);
-      dropGroupMin = new DropAll(1);
-    } else if (setMode == 2) {
-      dropGroupHead = new DropAll(2);
-    } else if (setMode == 3) {
-      dropGroupParticles = new PartPac();
-    }
-
-    // BOUNDARY
-    for (var m = 0; m < boundCount; m++) {
-      boundaries.push(new Boundary(0, 0, height + width, borderPadding * 2, 0));
-    }
-    positionBoundaries();
-    spokeBound = new Particle(width / 2, height / 2, 30, true);
-    // CLOCK HANDS
-    secHand = new Hand(width / 2, height / 2, secHandLength, 5, 0);
-    minHand = new Hand(width / 2, height / 2, minHandLength, 10, 1);
-    hourHand = new Hand(width / 2, height / 2, hourHandLength, 20, 2);
-
-    // MOUSE THINGS
-    let canvasMouse = Mouse.create(canvas.elt);
-    let options = { mouse: canvasMouse };
-    canvasMouse.pixelRatio = pixelDensity();
-    mConstraint = MouseConstraint.create(engine, options);
-    World.add(world, mConstraint);
-
-    noLoop();
-
-    // initializeBoundaries(screenWidth, screenHeight);
-  } else {
-    noLoop();
+  // TYPE PIECES
+  if (setMode == 0) {
+    dropGroupHour = new DropAll(0);
+  } else if (setMode == 1) {
+    dropGroupHour = new DropAll(0);
+    dropGroupMin = new DropAll(1);
+  } else if (setMode == 2) {
+    dropGroupHead = new DropAll(2);
+  } else if (setMode == 3) {
+    dropGroupParticles = new PartPac();
   }
+
+  // BOUNDARY
+  for (var m = 0; m < boundCount; m++) {
+    boundaries.push(new Boundary(0, 0, height + width, borderPadding * 2, 0));
+  }
+  positionBoundaries();
+  spokeBound = new Particle(width / 2, height / 2, 30, true);
+  // CLOCK HANDS
+  secHand = new Hand(width / 2, height / 2, secHandLength, 5, 0);
+  minHand = new Hand(width / 2, height / 2, minHandLength, 10, 1);
+  hourHand = new Hand(width / 2, height / 2, hourHandLength, 20, 2);
+
+  // MOUSE THINGS
+  let canvasMouse = Mouse.create(canvas.elt);
+  let options = { mouse: canvasMouse };
+  canvasMouse.pixelRatio = pixelDensity();
+  mConstraint = MouseConstraint.create(engine, options);
+  World.add(world, mConstraint);
+
+  console.log('Setup complete.');
+  // draw();
+
+  // loop();
+
+  // noLoop();
+
+  // initializeBoundaries(screenWidth, screenHeight);
+}
+
+function setup() {
+  checkSetupReadiness();
 }
 
 function draw() {
