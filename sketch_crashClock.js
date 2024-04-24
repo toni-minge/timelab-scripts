@@ -144,7 +144,7 @@ function setup() {
     mConstraint = MouseConstraint.create(engine, options);
     World.add(world, mConstraint);
 
-    initializeBoundaries(screenWidth, screenHeight);
+    // initializeBoundaries(screenWidth, screenHeight);
   } else {
     noLoop();
   }
@@ -245,7 +245,7 @@ function windowResized() {
   resizeCanvas(width, height);
 
   configureClock();
-  initializeBoundaries(width, height);
+  // initializeBoundaries(width, height);
   positionBoundaries();
 }
 
