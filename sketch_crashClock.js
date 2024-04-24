@@ -76,7 +76,16 @@ var fullScale = 1.2;
 var styleMode = 0;
 
 function preload() {
-  tFont[1] = loadFont('Inter-Medium.ttf');
+  tFont[fontSelect] = loadFont(
+    'Inter-Medium.ttf',
+    () => {
+      console.log('Font loaded successfully');
+    },
+    (err) => {
+      console.error('Error loading font:', err);
+    }
+  );
+  // tFont[1] = loadFont('Inter-Medium.ttf');
   pgTextFactor[1] = 0.735;
 }
 
@@ -90,6 +99,11 @@ function setup() {
 
     let canvas = createCanvas(screenWidth, screenHeight);
     canvas.parent('crashclock-container');
+
+    if (!tFont[fontSelect]) {
+      console.error('Font not ready. Ensure fonts are loaded before setup.');
+      return;
+    }
 
     // randomStart();
     // plannedStart();
