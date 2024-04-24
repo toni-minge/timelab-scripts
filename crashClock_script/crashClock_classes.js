@@ -359,23 +359,39 @@ class Hand {
 }
 class Boundary {
   constructor(t, s, i, e, h) {
-    (this.x = t), (this.y = s), (this.w = i), (this.h = e), (this.a = h);
-    let r = { friction: 0, restitution: 0.6, angle: h, isStatic: !0 };
-    (this.body = Bodies.rectangle(this.x, this.y, this.w, this.h, r)),
-      Composite.add(world, this.body);
+    this.x = t;
+    this.y = s;
+    this.w = i;
+    this.h = e;
+    this.a = h;
+    let options = {
+      friction: 0,
+      restitution: 0.6,
+      angle: this.a,
+      isStatic: true,
+    };
+
+    this.body = Bodies.rectangle(this.x, this.y, this.w, this.h, options);
+    if (!this.body) {
+      console.error('Failed to create body:', this);
+      return;
+    }
+
+    Composite.add(world, this.body);
   }
+
   show() {
-    let t = this.body.position,
-      s = this.body.angle;
-    strokeWeight(1),
-      stroke(0, 0, 255),
-      noFill(),
-      ellipse(t.x, t.y, 20, 20),
-      push(),
-      translate(t.x, t.y),
-      rotate(s),
-      rectMode(CENTER),
-      rect(0, 0, this.w, this.h),
-      pop();
+    let pos = this.body.position,
+      angle = this.body.angle;
+    strokeWeight(1);
+    stroke(0, 0, 255);
+    noFill();
+    ellipse(pos.x, pos.y, 20, 20);
+    push();
+    translate(pos.x, pos.y);
+    rotate(angle);
+    rectMode(CENTER);
+    rect(0, 0, this.w, this.h);
+    pop();
   }
 }

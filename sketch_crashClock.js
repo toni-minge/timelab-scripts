@@ -243,6 +243,7 @@ function windowResized() {
   resizeCanvas(width, height);
 
   configureClock();
+  initializeBoundaries(width, height);
   positionBoundaries();
 }
 
@@ -331,6 +332,19 @@ function configureClock() {
   pgTextSizeHour = textScaler * pgTextSizeHourMax;
   pgTextSizeMin = textScaler * pgTextSizeMinMax;
   pgTextSizeHead = textScaler * pgTextSizeHeadMax;
+}
+
+function initializeBoundaries(width, height) {
+  boundaries = []; // Clear existing boundaries if any
+  for (let m = 0; m < boundCount; m++) {
+    let boundary = new Boundary(0, 0, width + height, borderPadding * 2, 0);
+    if (boundary.body) {
+      boundaries.push(boundary);
+    } else {
+      console.error('Failed to create boundary at index', m);
+      continue; // Skip adding this boundary to the array
+    }
+  }
 }
 
 function positionBoundaries() {
