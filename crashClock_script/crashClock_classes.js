@@ -13,11 +13,6 @@ class DropLetter {
       ' ' != this.thisLetter && (this.textPointMaker(), this.physicsPointMaker());
   }
   textPointMaker() {
-    if (!tFont[fontSelect]) {
-      console.error('Font is not loaded yet:', this.thisLetter);
-      return;
-    }
-
     this.points = tFont[fontSelect].textToPoints(
       this.thisLetter,
       this.orgX,

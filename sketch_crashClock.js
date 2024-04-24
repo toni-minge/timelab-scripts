@@ -158,6 +158,8 @@ function setup() {
     mConstraint = MouseConstraint.create(engine, options);
     World.add(world, mConstraint);
 
+    noLoop();
+
     // initializeBoundaries(screenWidth, screenHeight);
   } else {
     noLoop();
