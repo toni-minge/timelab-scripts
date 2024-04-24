@@ -94,6 +94,8 @@ function setup() {
     // randomStart();
     // plannedStart();
 
+    // initializeBoundaries(width, height);
+
     setText();
 
     secSmoothAng = TWO_PI / 60 / fps;
@@ -234,18 +236,18 @@ function draw() {
   }
 }
 
-// function windowResized() {
-//   const container = document.getElementById('crashclock-container');
-//   // Get the width and height of the container
-//   const width = container.clientWidth;
-//   const height = container.clientHeight;
+function windowResized() {
+  const container = document.getElementById('crashclock-container');
+  // Get the width and height of the container
+  const width = container.clientWidth;
+  const height = container.clientHeight;
 
-//   resizeCanvas(width, height);
+  resizeCanvas(width, height);
 
-//   configureClock();
-//   initializeBoundaries(width, height);
-//   positionBoundaries();
-// }
+  configureClock();
+  // initializeBoundaries(width, height);
+  positionBoundaries();
+}
 
 function runClock() {
   ///////// secHand
