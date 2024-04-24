@@ -72,7 +72,7 @@ var clockBorder;
 var fontSelect = 1;
 var borderDraw = 0;
 
-var fullScale = 1.5;
+var fullScale = 1.2;
 var styleMode = 0;
 
 function preload() {
@@ -93,8 +93,6 @@ function setup() {
 
     // randomStart();
     // plannedStart();
-
-    // initializeBoundaries(width, height);
 
     setText();
 
@@ -145,6 +143,8 @@ function setup() {
     canvasMouse.pixelRatio = pixelDensity();
     mConstraint = MouseConstraint.create(engine, options);
     World.add(world, mConstraint);
+
+    initializeBoundaries(screenWidth, screenHeight);
   } else {
     noLoop();
   }
@@ -245,7 +245,7 @@ function windowResized() {
   resizeCanvas(width, height);
 
   configureClock();
-  // initializeBoundaries(width, height);
+  initializeBoundaries(width, height);
   positionBoundaries();
 }
 
